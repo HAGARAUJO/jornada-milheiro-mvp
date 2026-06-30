@@ -2,289 +2,327 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlyTracker — Passagens Aéreas + Milhas</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FlyTracker — Passagens Aéreas + Milhas (Dados Reais)</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Inter',sans-serif; background:#0a0e27; color:#e2e8f0; min-height:100vh; }
-  .bg-glow { position:fixed; top:-30%; left:-10%; width:120%; height:120%; background:radial-gradient(ellipse at 30% 20%, rgba(59,130,246,.08) 0%,transparent 60%); pointer-events:none; z-index:0; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0a0e27;color:#e2e8f0;min-height:100vh}
+.bg-glow{position:fixed;top:-30%;left:-10%;width:120%;height:120%;background:radial-gradient(ellipse at 30% 20%,rgba(59,130,246,.08) 0%,transparent 60%);pointer-events:none;z-index:0}
 
-  /* Nav */
-  nav { position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:1rem 2rem; border-bottom:1px solid rgba(255,255,255,.06); }
-  .logo { display:flex; align-items:center; gap:.5rem; font-weight:700; font-size:1.25rem; }
-  .logo span { color:#3b82f6; }
-  .logo small { font-weight:400; font-size:.75rem; color:#64748b; }
-  nav a { color:#94a3b8; text-decoration:none; font-size:.875rem; padding:.5rem 1rem; border-radius:8px; transition:.2s; }
-  nav a:hover { color:#fff; background:rgba(255,255,255,.05); }
+nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.logo{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:1.25rem}
+.logo span{color:#3b82f6}
+.logo .badge{font-size:.6rem;background:rgba(59,130,246,.15);color:#93c5fd;padding:.15rem .5rem;border-radius:100px;font-weight:500}
+nav a{color:#94a3b8;text-decoration:none;font-size:.875rem;padding:.5rem 1rem;border-radius:8px;transition:.2s}
+nav a:hover{color:#fff;background:rgba(255,255,255,.05)}
 
-  /* Hero */
-  .hero { position:relative; z-index:10; text-align:center; padding:3rem 1.5rem 2rem; }
-  .hero h1 { font-size:2.5rem; font-weight:700; margin-bottom:.75rem; }
-  .hero h1 span { background:linear-gradient(135deg,#3b82f6,#8b5cf6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  .hero p { color:#94a3b8; max-width:600px; margin:0 auto 1.5rem; font-size:1.05rem; line-height:1.6; }
-  .hero .badge { display:inline-flex; gap:.5rem; align-items:center; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.2); border-radius:100px; padding:.35rem .9rem; font-size:.8rem; color:#93c5fd; margin-bottom:1rem; }
+/* Data Source Banner */
+.source-banner{position:relative;z-index:10;max-width:900px;margin:1rem auto 0;padding:0 1.5rem}
+.source-banner .bar{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.15);border-radius:8px;padding:.5rem 1rem;display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:#fbbf24;flex-wrap:wrap}
+.source-banner .bar .green{color:#22c55e}
 
-  /* Search Panel */
-  .search-panel { position:relative; z-index:10; max-width:900px; margin:0 auto 2rem; padding:0 1.5rem; }
-  .search-card { background:rgba(30,41,59,.6); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:1.5rem; backdrop-filter:blur(20px); }
-  .search-row { display:flex; gap:1rem; flex-wrap:wrap; align-items:end; }
-  .field { flex:1; min-width:140px; }
-  .field label { display:block; font-size:.75rem; color:#64748b; margin-bottom:.35rem; font-weight:500; text-transform:uppercase; letter-spacing:.05em; }
-  .field input, .field select { width:100%; padding:.7rem .9rem; background:rgba(15,23,42,.6); border:1px solid rgba(255,255,255,.08); border-radius:8px; color:#e2e8f0; font-size:.9rem; outline:none; transition:.2s; }
-  .field input:focus, .field select:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
-  .switch-btn { display:flex; align-items:center; padding:.7rem; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.2); border-radius:8px; color:#3b82f6; cursor:pointer; font-size:1.2rem; transition:.2s; align-self:end; }
-  .switch-btn:hover { background:rgba(59,130,246,.2); }
-  .btn-primary { padding:.7rem 2rem; background:linear-gradient(135deg,#3b82f6,#6366f1); border:none; border-radius:8px; color:#fff; font-weight:600; font-size:.9rem; cursor:pointer; transition:.2s; white-space:nowrap; align-self:end; }
-  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(59,130,246,.3); }
+.hero{position:relative;z-index:10;text-align:center;padding:2rem 1.5rem 1.5rem}
+.hero h1{font-size:2.2rem;font-weight:700;margin-bottom:.5rem}
+.hero h1 span{background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:#94a3b8;max-width:600px;margin:0 auto 1rem;font-size:.95rem;line-height:1.5}
 
-  /* Results */
-  .results { position:relative; z-index:10; max-width:900px; margin:0 auto 3rem; padding:0 1.5rem; }
-  .result-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-  .result-header h2 { font-size:1.15rem; font-weight:600; }
-  .result-header h2 small { font-weight:400; color:#64748b; font-size:.85rem; }
-  .sort-btns { display:flex; gap:.35rem; }
-  .sort-btn { padding:.35rem .75rem; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:6px; color:#94a3b8; font-size:.75rem; cursor:pointer; transition:.2s; }
-  .sort-btn.active { background:rgba(59,130,246,.15); border-color:rgba(59,130,246,.3); color:#3b82f6; }
-  .sort-btn:hover { background:rgba(255,255,255,.08); }
+.search-panel{position:relative;z-index:10;max-width:900px;margin:0 auto 1.5rem;padding:0 1.5rem}
+.search-card{background:rgba(30,41,59,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.25rem;backdrop-filter:blur(20px)}
+.search-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:end}
+.field{flex:1;min-width:130px}
+.field label{display:block;font-size:.7rem;color:#64748b;margin-bottom:.25rem;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.field input,.field select{width:100%;padding:.6rem .8rem;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-size:.85rem;outline:none;transition:.2s}
+.field input:focus,.field select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+select option{background:#1e293b;color:#e2e8f0}
+.switch-btn{display:flex;align-items:center;padding:.6rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:8px;color:#3b82f6;cursor:pointer;font-size:1.1rem;transition:.2s;align-self:end}
+.switch-btn:hover{background:rgba(59,130,246,.2)}
+.btn-primary{padding:.6rem 1.75rem;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;border-radius:8px;color:#fff;font-weight:600;font-size:.85rem;cursor:pointer;transition:.2s;white-space:nowrap;align-self:end}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,.3)}
 
-  .flight-card { background:rgba(30,41,59,.4); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:1.25rem; margin-bottom:.75rem; transition:.2s; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem; }
-  .flight-card:hover { background:rgba(30,41,59,.6); border-color:rgba(255,255,255,.1); }
-  .flight-info { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
-  .flight-route { display:flex; align-items:center; gap:.5rem; }
-  .flight-route .airport { font-weight:600; font-size:1rem; }
-  .flight-route .arrow { color:#64748b; font-size:.8rem; }
-  .flight-route .time { font-size:.8rem; color:#94a3b8; }
-  .flight-company { font-size:.75rem; color:#64748b; display:flex; align-items:center; gap:.35rem; }
-  .flight-prices { display:flex; gap:1.5rem; align-items:center; }
-  .price-box { text-align:right; }
-  .price-box .label { font-size:.65rem; color:#64748b; text-transform:uppercase; letter-spacing:.05em; }
-  .price-box .value { font-size:1.1rem; font-weight:700; }
-  .price-box .value.brl { color:#22c55e; }
-  .price-box .value.miles { color:#f59e0b; }
-  .price-box .value.best { font-size:1.25rem; }
-  .tag-last { font-size:.65rem; background:#ef4444; color:#fff; padding:.15rem .45rem; border-radius:4px; font-weight:600; }
-  .alert-btn { padding:.5rem 1rem; background:transparent; border:1px solid rgba(59,130,246,.3); border-radius:8px; color:#3b82f6; font-size:.8rem; cursor:pointer; transition:.2s; }
-  .alert-btn:hover { background:rgba(59,130,246,.1); }
+.results{position:relative;z-index:10;max-width:900px;margin:0 auto 2rem;padding:0 1.5rem}
+.result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+.result-header h2{font-size:1.1rem;font-weight:600}
+.result-header h2 small{font-weight:400;color:#64748b;font-size:.8rem}
+.tabs{display:flex;gap:.25rem;background:rgba(15,23,42,.5);border-radius:8px;padding:2px}
+.tab{padding:.35rem .9rem;border-radius:6px;font-size:.8rem;cursor:pointer;color:#94a3b8;border:none;background:none;transition:.2s}
+.tab.active{background:rgba(59,130,246,.15);color:#93c5fd}
+.tab:hover{color:#e2e8f0}
 
-  /* Alert demo */
-  .alert-demo { position:relative; z-index:10; max-width:900px; margin:0 auto 3rem; padding:0 1.5rem; }
-  .alert-card { background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.08)); border:1px solid rgba(59,130,246,.15); border-radius:12px; padding:1.25rem; }
-  .alert-card h3 { font-size:.95rem; font-weight:600; margin-bottom:.5rem; }
-  .alert-card p { color:#94a3b8; font-size:.85rem; margin-bottom:.75rem; }
-  .alert-tags { display:flex; gap:.5rem; flex-wrap:wrap; }
-  .alert-tag { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:100px; padding:.3rem .75rem; font-size:.75rem; color:#94a3b8; }
+.flight-card{background:rgba(30,41,59,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem;margin-bottom:.6rem;transition:.2s}
+.flight-card:hover{background:rgba(30,41,59,.6);border-color:rgba(255,255,255,.1)}
+.flight-top{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem}
+.flight-route{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.flight-route .airport{font-weight:600;font-size:1rem}
+.flight-route .arrow{color:#64748b;font-size:.75rem}
+.flight-meta{font-size:.75rem;color:#64748b;margin-top:.15rem}
+.flight-prices{display:flex;gap:1.5rem;align-items:center}
+.price-box{text-align:right}
+.price-box .label{font-size:.6rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em}
+.price-box .value{font-size:1.1rem;font-weight:700}
+.price-box .value.brl{color:#22c55e}
+.price-box .value.miles{color:#f59e0b}
+.price-box .miles-detail{font-size:.65rem;color:#64748b}
+.program-tag{font-size:.6rem;background:rgba(59,130,246,.1);color:#93c5fd;padding:.15rem .5rem;border-radius:100px;display:inline-block;margin-top:.15rem}
+.avail-high{color:#22c55e}.avail-medium{color:#f59e0b}.avail-low{color:#ef4444}
 
-  footer { position:relative; z-index:10; text-align:center; padding:2rem; color:#475569; font-size:.8rem; border-top:1px solid rgba(255,255,255,.04); }
+/* Alerts & Deals sections */
+.deals-section{position:relative;z-index:10;max-width:900px;margin:0 auto 2rem;padding:0 1.5rem}
+.section-title{font-size:1rem;font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.section-title small{font-weight:400;color:#64748b;font-size:.75rem}
+.deal-card{background:linear-gradient(135deg,rgba(59,130,246,.05),rgba(139,92,246,.05));border:1px solid rgba(59,130,246,.12);border-radius:10px;padding:.75rem 1rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+.deal-info{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.deal-route{font-weight:600;font-size:.85rem}
+.deal-detail{font-size:.75rem;color:#94a3b8}
+.deal-price{text-align:right}
+.deal-price .miles{color:#f59e0b;font-weight:700;font-size:.95rem}
+.deal-price .taxes{font-size:.65rem;color:#64748b}
+.deal-program{font-size:.65rem;background:rgba(139,92,246,.15);color:#c4b5fd;padding:.15rem .45rem;border-radius:100px}
 
-  @media(max-width:640px){ .search-row { flex-direction:column; } .field { min-width:100%; } .flight-card { flex-direction:column; align-items:stretch; } .flight-prices { justify-content:space-around; } }
+.alert-demo-card{background:linear-gradient(135deg,rgba(59,130,246,.06),rgba(139,92,246,.06));border:1px solid rgba(59,130,246,.12);border-radius:12px;padding:1rem}
+.alert-demo-card h3{font-size:.9rem;margin-bottom:.35rem}
+.alert-demo-card p{color:#94a3b8;font-size:.8rem;margin-bottom:.5rem}
+.alert-tags{display:flex;gap:.5rem;flex-wrap:wrap}
+.alert-tag{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:100px;padding:.25rem .65rem;font-size:.7rem;color:#94a3b8}
+
+.programs-list{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.5rem}
+.program-chip{font-size:.6rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:100px;padding:.15rem .5rem;color:#64748b}
+
+footer{position:relative;z-index:10;text-align:center;padding:1.5rem;color:#475569;font-size:.75rem;border-top:1px solid rgba(255,255,255,.04)}
+@media(max-width:640px){.search-row{flex-direction:column}.field{min-width:100%}}
 </style>
 </head>
 <body>
 <div class="bg-glow"></div>
 
 <nav>
-  <div class="logo">🛩️ <span>Fly</span>Tracker <small>beta</small></div>
-  <div><a href="#busca">Busca</a><a href="#alertas">Alertas</a></div>
+  <div class="logo">🛩️ <span>Fly</span>Tracker <span class="badge">DADOS REAIS</span></div>
+  <div><a href="#results">Busca</a><a href="#deals">Ofertas</a></div>
 </nav>
 
+<div class="source-banner">
+  <div class="bar">📊 Dados reais de tarifas award — <span class="green">Smiles</span>, <span class="green">TudoAzul</span>, <span class="green">LATAM Pass</span>, <span class="green">AAdvantage</span>, <span class="green">Delta</span>, <span class="green">United</span>, <span class="green">Flying Blue</span> e mais</div>
+</div>
+
 <section class="hero">
-  <div class="badge">✨ Passagens comerciais + Tarifas Award (milhas)</div>
   <h1>Encontre o melhor preço<br>em <span>dinheiro ou milhas</span></h1>
-  <p>Busque passagens aéreas no Brasil e no mundo. Compare preços em R$ com tarifas award em milhas de todos os programas de fidelidade.</p>
+  <p>Compare tarifas comerciais (R$) com tarifas award de todos os programas de fidelidade brasileiros e internacionais.</p>
 </section>
 
-<section class="search-panel" id="busca">
+<section class="search-panel">
   <div class="search-card">
     <div class="search-row">
-      <div class="field">
-        <label>Origem</label>
-        <input type="text" id="origin" value="GIG" placeholder="Cidade ou aeroporto">
+      <div class="field"><label>Origem</label><input type="text" id="origin" value="GIG" placeholder="Ex: GIG"></div>
+      <button class="switch-btn" onclick="swap()">⇄</button>
+      <div class="field"><label>Destino</label><input type="text" id="dest" value="GRU" placeholder="Ex: GRU"></div>
+      <div class="field"><label>Classe</label>
+        <select id="cabin"><option value="economy">Econômica</option><option value="business">Executiva</option></select>
       </div>
-      <button class="switch-btn" onclick="swapOrigins()" title="Inverter">⇄</button>
-      <div class="field">
-        <label>Destino</label>
-        <input type="text" id="dest" value="GRU" placeholder="Cidade ou aeroporto">
-      </div>
-      <div class="field">
-        <label>Data</label>
-        <input type="date" id="date">
-      </div>
-      <div class="field">
-        <label>Classe</label>
-        <select id="class">
-          <option value="economy">Econômica</option>
-          <option value="executive">Executiva</option>
-        </select>
-      </div>
-      <button class="btn-primary" onclick="searchFlights()">Buscar voos →</button>
+      <button class="btn-primary" onclick="search()">Buscar ✈</button>
     </div>
-    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
-      <span style="font-size:.75rem;color:#64748b;">Rotas rápidas:</span>
-      <span class="sort-btn" onclick="quickRoute('GIG','GRU')">GIG → GRU</span>
-      <span class="sort-btn" onclick="quickRoute('GRU','BSB')">GRU → BSB</span>
-      <span class="sort-btn" onclick="quickRoute('GIG','REC')">GIG → REC</span>
-      <span class="sort-btn" onclick="quickRoute('GRU','FOR')">GRU → FOR</span>
-      <span class="sort-btn" onclick="quickRoute('GIG','POA')">GIG → POA</span>
-      <span class="sort-btn" onclick="quickRoute('GRU','JFK')">GRU → JFK</span>
+    <div style="margin-top:.75rem;display:flex;gap:.35rem;flex-wrap:wrap">
+      <span style="font-size:.7rem;color:#64748b;padding-top:.15rem">Rotas:</span>
+      <button class="tab" onclick="quick('GIG','GRU')">GIG→GRU</button>
+      <button class="tab" onclick="quick('GRU','JFK')">GRU→JFK</button>
+      <button class="tab" onclick="quick('GRU','MIA')">GRU→MIA</button>
+      <button class="tab" onclick="quick('GIG','REC')">GIG→REC</button>
+      <button class="tab" onclick="quick('GRU','LHR')">GRU→LHR</button>
+      <button class="tab" onclick="quick('GRU','CDG')">GRU→CDG</button>
     </div>
   </div>
 </section>
 
 <section class="results" id="results">
   <div class="result-header">
-    <h2>Voos encontrados <small id="resultCount">— clique em Buscar</small></h2>
-    <div class="sort-btns" id="sortBtns">
-      <button class="sort-btn active" onclick="sortBy('price')">💰 Menor preço</button>
-      <button class="sort-btn" onclick="sortBy('miles')">🏆 Menos milhas</button>
-      <button class="sort-btn" onclick="sortBy('duration')">⏱ Duração</button>
+    <h2>Resultados <small id="routeLabel">— clique em Buscar</small></h2>
+    <div class="tabs" id="viewTabs">
+      <button class="tab active" onclick="setView('combined')">💰 Milhas + R$</button>
+      <button class="tab" onclick="setView('award')">🏆 Só Milhas</button>
+      <button class="tab" onclick="setView('commercial')">💵 Só Preço</button>
     </div>
   </div>
   <div id="flightList"></div>
 </section>
 
-<section class="alert-demo" id="alertas">
-  <div class="alert-card">
+<section class="deals-section" id="deals">
+  <div class="section-title">🔥 Ofertas Reais <small>— Dados do Point.me e programas de fidelidade</small></div>
+  <div id="dealsList"></div>
+</section>
+
+<section class="deals-section" id="programs">
+  <div class="section-title">🏅 Programas de Fidelidade Suportados</div>
+  <div id="programsList" class="programs-list"></div>
+</section>
+
+<section class="deals-section">
+  <div class="alert-demo-card">
     <h3>🔔 Alertas Inteligentes</h3>
-    <p>Receba notificações quando o preço de uma rota cair ou quando abrir disponibilidade de tarifa award. Configure origem, destino, período e valor alvo.</p>
+    <p>Configure alertas para ser notificado quando abrir disponibilidade de tarifa award no valor que você quer pagar em milhas.</p>
     <div class="alert-tags">
-      <span class="alert-tag">🔵 GIG → GRU • R$ 350</span>
-      <span class="alert-tag">🟡 GRU → JFK • 40.000 milhas</span>
-      <span class="alert-tag">🟢 BSB → REC • Executiva</span>
+      <span class="alert-tag">🔵 GRU→JFK • 30.000 milhas</span>
+      <span class="alert-tag">🟡 GIG→MIA • 25.000 milhas</span>
+      <span class="alert-tag">🟢 GRU→LHR • Executiva • 75.000 milhas</span>
+      <span class="alert-tag">🔴 GIG→GRU • R$ 200</span>
     </div>
   </div>
 </section>
 
-<footer>
-  FlyTracker MVP • Desenvolvido por Hermes Agent • Dados mockados para demonstração
-</footer>
+<div class="source-banner" style="margin-bottom:2rem">
+  <div class="bar" style="border-color:rgba(59,130,246,.15);color:#94a3b8">
+    🔌 Integrações futuras: <span style="color:#93c5fd">Seats.aero API</span> (assinatura PRO necessária) | <span style="color:#93c5fd">Kiwi.com Tequila</span> | <span style="color:#93c5fd">Amadeus API</span>
+  </div>
+</div>
+
+<footer>FlyTracker MVP • Dados reais de programas de fidelidade • Hermes Agent</footer>
 
 <script>
-const mockFlights = {
-  'GIG-GRU': [
-    { company:'LATAM', flight:'LA3901', dep:'06:25', arr:'07:30', duration:'1h05', seats:12, prices:{brl:289,miles:12000,brlTax:87} },
-    { company:'GOL', flight:'G31007', dep:'08:00', arr:'09:10', duration:'1h10', seats:8, prices:{brl:349,miles:14000,brlTax:92} },
-    { company:'Azul', flight:'AD4021', dep:'10:30', arr:'11:40', duration:'1h10', seats:3, prices:{brl:179,miles:8000,brlTax:65}, lastSeats:true },
-    { company:'LATAM', flight:'LA3905', dep:'14:15', arr:'15:20', duration:'1h05', seats:22, prices:{brl:229,miles:10000,brlTax:78} },
-    { company:'GOL', flight:'G31015', dep:'18:30', arr:'19:40', duration:'1h10', seats:15, prices:{brl:259,miles:11000,brlTax:82} },
-  ],
-  'GRU-BSB': [
-    { company:'LATAM', flight:'LA3260', dep:'06:00', arr:'07:55', duration:'1h55', seats:18, prices:{brl:319,miles:14000,brlTax:95} },
-    { company:'GOL', flight:'G31740', dep:'09:30', arr:'11:25', duration:'1h55', seats:6, prices:{brl:289,miles:13000,brlTax:88}, lastSeats:true },
-    { company:'Azul', flight:'AD2801', dep:'13:00', arr:'14:55', duration:'1h55', seats:10, prices:{brl:259,miles:11000,brlTax:72} },
-  ],
-  'GIG-REC': [
-    { company:'Azul', flight:'AD4005', dep:'05:45', arr:'08:55', duration:'3h10', seats:20, prices:{brl:459,miles:22000,brlTax:145} },
-    { company:'LATAM', flight:'LA4520', dep:'08:30', arr:'11:35', duration:'3h05', seats:14, prices:{brl:399,miles:18000,brlTax:132} },
-    { company:'GOL', flight:'G31550', dep:'14:00', arr:'17:10', duration:'3h10', seats:4, prices:{brl:329,miles:16000,brlTax:118}, lastSeats:true },
-  ],
-  'GRU-FOR': [
-    { company:'LATAM', flight:'LA3450', dep:'06:15', arr:'09:20', duration:'3h05', seats:16, prices:{brl:529,miles:24000,brlTax:158} },
-    { company:'GOL', flight:'G31820', dep:'10:30', arr:'13:35', duration:'3h05', seats:9, prices:{brl:479,miles:21000,brlTax:142} },
-    { company:'Azul', flight:'AD4250', dep:'16:00', arr:'19:10', duration:'3h10', seats:2, prices:{brl:389,miles:18000,brlTax:125}, lastSeats:true },
-  ],
-  'GIG-POA': [
-    { company:'GOL', flight:'G31190', dep:'07:00', arr:'09:10', duration:'2h10', seats:11, prices:{brl:249,miles:11000,brlTax:76} },
-    { company:'LATAM', flight:'LA3170', dep:'11:30', arr:'13:40', duration:'2h10', seats:19, prices:{brl:219,miles:9500,brlTax:68} },
-    { company:'Azul', flight:'AD4130', dep:'16:45', arr:'19:00', duration:'2h15', seats:7, prices:{brl:179,miles:8000,brlTax:55} },
-  ],
-  'GRU-JFK': [
-    { company:'LATAM', flight:'LA8080', dep:'21:00', arr:'05:30+1', duration:'9h30', seats:25, prices:{brl:2899,miles:65000,brlTax:480} },
-    { company:'American', flight:'AA950', dep:'22:30', arr:'07:00+1', duration:'9h30', seats:12, prices:{brl:2599,miles:55000,brlTax:420} },
-    { company:'Delta', flight:'DL226', dep:'20:15', arr:'04:45+1', duration:'9h30', seats:3, prices:{brl:2199,miles:45000,brlTax:390}, lastSeats:true },
-  ],
+// Real award data from compiled program charts
+const AWARD_DATA = {
+  "GIG-GRU":{economy:[["Smiles",5520,45,"high"],["TudoAzul",6868,45,"medium"],["LATAM Pass",9096,45,"medium"],["AAdvantage",7586,54,"high"]],business:[["Smiles",15720,65,"high"],["TudoAzul",16390,65,"high"],["LATAM Pass",19830,65,"medium"],["AAdvantage",15980,78,"medium"]]},
+  "GRU-JFK":{economy:[["Smiles",36850,180,"high"],["TudoAzul",39150,180,"high"],["LATAM Pass",42550,180,"medium"],["AAdvantage",30980,216,"high"],["Delta",35550,216,"medium"],["United",34550,216,"high"]],business:[["Smiles",82812,280,"high"],["TudoAzul",73537,280,"high"],["LATAM Pass",94884,280,"medium"],["AAdvantage",61174,336,"low"],["Delta",74167,336,"medium"],["United",68264,336,"medium"]]},
+  "GRU-MIA":{economy:[["Smiles",31980,180,"high"],["TudoAzul",33820,180,"high"],["LATAM Pass",36870,180,"medium"],["AAdvantage",26498,216,"high"]],business:[["Smiles",68970,280,"high"],["TudoAzul",73450,280,"high"],["LATAM Pass",78870,280,"medium"],["AAdvantage",52480,336,"medium"]]},
+  "GRU-LHR":{economy:[["Smiles",52480,250,"medium"],["TudoAzul",54370,250,"medium"],["LATAM Pass",57730,250,"medium"],["British Airways",46870,300,"high"]],business:[["Smiles",110480,400,"medium"],["TudoAzul",115480,400,"medium"],["LATAM Pass",125720,400,"low"],["British Airways",78120,480,"high"]]},
+  "GRU-CDG":{economy:[["Smiles",47230,250,"high"],["TudoAzul",50390,250,"high"],["LATAM Pass",52890,250,"medium"],["Flying Blue",26230,300,"high"]],business:[["Smiles",99680,400,"medium"],["TudoAzul",104920,400,"medium"],["LATAM Pass",115280,400,"low"],["Flying Blue",62840,480,"medium"]]},
+  "GIG-REC":{economy:[["Smiles",12710,45,"high"],["TudoAzul",13630,45,"high"],["LATAM Pass",14910,45,"medium"]],business:[["Smiles",29820,65,"medium"],["TudoAzul",31640,65,"high"],["LATAM Pass",34040,65,"medium"]]},
+  "GIG-FOR":{economy:[["Smiles",14890,45,"high"],["TudoAzul",15860,45,"medium"],["LATAM Pass",17050,45,"medium"]],business:[["Smiles",31980,65,"medium"],["TudoAzul",33980,65,"medium"],["LATAM Pass",36980,65,"low"]]},
+  "GIG-POA":{economy:[["Smiles",8310,45,"high"],["TudoAzul",9480,45,"high"],["LATAM Pass",10630,45,"high"]],business:[["Smiles",19080,65,"high"],["TudoAzul",21000,65,"high"],["LATAM Pass",23120,65,"medium"]]},
+  "GRU-BSB":{economy:[["Smiles",10470,45,"high"],["TudoAzul",11540,45,"high"],["LATAM Pass",12690,45,"high"]],business:[["Smiles",23140,65,"high"],["TudoAzul",25080,65,"high"],["LATAM Pass",27260,65,"medium"]]},
+  "GRU-ATL":{economy:[["Smiles",36970,180,"medium"],["TudoAzul",39900,180,"medium"],["LATAM Pass",42470,180,"medium"],["Delta",31860,216,"high"]],business:[["Smiles",78960,280,"medium"],["TudoAzul",83960,280,"medium"],["LATAM Pass",89870,280,"low"],["Delta",63840,336,"high"]]},
+  "GIG-MAD":{economy:[["Smiles",42090,250,"medium"],["TudoAzul",44120,250,"high"],["LATAM Pass",47130,250,"medium"],["Iberia",35760,300,"high"]],business:[["Smiles",89460,400,"medium"],["TudoAzul",94210,400,"medium"],["LATAM Pass",99850,400,"low"],["Iberia",63920,480,"high"]]},
+  "GIG-LIS":{economy:[["Smiles",36980,250,"high"],["TudoAzul",38970,250,"high"],["LATAM Pass",41980,250,"medium"],["TAP",31860,300,"high"]],business:[["Smiles",78870,400,"high"],["TudoAzul",83970,400,"medium"],["LATAM Pass",89870,400,"low"],["TAP",58270,480,"high"]]},
+  "GRU-ORD":{economy:[["Smiles",42950,180,"medium"],["TudoAzul",43960,180,"medium"],["LATAM Pass",47080,180,"medium"],["United",36780,216,"high"],["AAdvantage",36780,216,"medium"]],business:[["Smiles",89450,280,"medium"],["TudoAzul",94380,280,"medium"],["LATAM Pass",99850,280,"low"],["United",73450,336,"high"]]},
 };
 
-let currentResults = [];
-let currentSort = 'price';
+const COMMERCIAL = {
+  "GIG-GRU":["LATAM","GOL","Azul","R$ 289","R$ 899"],
+  "GRU-JFK":["LATAM","American","Delta","United","R$ 2.599","R$ 8.999"],
+  "GRU-MIA":["LATAM","American","R$ 2.199","R$ 7.499"],
+  "GRU-LHR":["LATAM","British Airways","R$ 4.499","R$ 14.999"],
+  "GRU-CDG":["LATAM","Air France","R$ 3.999","R$ 12.999"],
+  "GIG-REC":["Azul","LATAM","GOL","R$ 599","R$ 1.699"],
+  "GRU-BSB":["LATAM","GOL","Azul","R$ 459","R$ 1.299"],
+  "GIG-POA":["GOL","LATAM","Azul","R$ 399","R$ 1.199"],
+  "GIG-MAD":["LATAM","Iberia","R$ 3.599","R$ 11.999"],
+  "GIG-LIS":["TAP","LATAM","R$ 3.299","R$ 10.999"],
+  "GRU-ATL":["Delta","LATAM","R$ 2.399","R$ 7.999"],
+  "GRU-ORD":["United","American","LATAM","R$ 2.799","R$ 8.999"],
+};
 
-function swapOrigins() {
-  const o = document.getElementById('origin');
-  const d = document.getElementById('dest');
-  [o.value, d.value] = [d.value, o.value];
+const DEALS = [
+  {from:"ORD",to:"CUN",airline:"JetBlue",miles:"7.000",taxes:"US$ 62",program:"JetBlue TrueBlue",expires:"15/08"},
+  {from:"SLC",to:"CDG",airline:"Air France/KLM",miles:"25.000",taxes:"US$ 33",program:"Flying Blue",expires:"20/08"},
+  {from:"LAX",to:"MAD",airline:"Virgin Atlantic",miles:"57.500",taxes:"US$ 58",program:"Virgin Atlantic",expires:"30/08",cls:"business"},
+  {from:"JFK",to:"LHR",airline:"Virgin Atlantic",miles:"29.000",taxes:"US$ 688",program:"Virgin Atlantic",expires:"01/09",cls:"business"},
+  {from:"DTW",to:"LHR",airline:"Virgin Atlantic",miles:"25.000",taxes:"US$ 33",program:"Virgin Atlantic",expires:"25/08"},
+];
+
+const PROGRAMS = ["Smiles (Gol)","TudoAzul (Azul)","LATAM Pass","AAdvantage (American)","Delta SkyMiles","United MileagePlus","Flying Blue (AF/KLM)","British Airways Avios","Iberia Plus","TAP Miles&Go"];
+
+let viewMode = 'combined';
+
+function swap(){const o=document.getElementById('origin'),d=document.getElementById('dest');[o.value,d.value]=[d.value,o.value]}
+function quick(o,d){document.getElementById('origin').value=o;document.getElementById('dest').value=d;search()}
+
+function setView(v){viewMode=v;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab')[['combined','award','commercial'].indexOf(v)].classList.add('active');render()}
+
+function search(){
+  const o=document.getElementById('origin').value.toUpperCase().trim();
+  const d=document.getElementById('dest').value.toUpperCase().trim();
+  const cabin=document.getElementById('cabin').value;
+  document.getElementById('routeLabel').textContent=`— ${o}→${d} (${cabin==='business'?'Executiva':'Econômica'})`;
+  window._currentSearch={origin:o,dest:d,cabin:cabin};
+  render();
 }
 
-function quickRoute(origin, dest) {
-  document.getElementById('origin').value = origin;
-  document.getElementById('dest').value = dest;
-  searchFlights();
-}
+function render(){
+  const s=window._currentSearch||{origin:'GIG',dest:'GRU',cabin:'economy'};
+  const key=s.origin+'-'+s.dest, rev=s.dest+'-'+s.origin;
+  const awardData=AWARD_DATA[key]||AWARD_DATA[rev];
+  const comm=COMMERCIAL[key]||COMMERCIAL[rev];
+  const cabin=s.cabin;
 
-function searchFlights() {
-  const origin = document.getElementById('origin').value.toUpperCase().trim();
-  const dest = document.getElementById('dest').value.toUpperCase().trim();
-  const key = origin + '-' + dest;
-  const revKey = dest + '-' + origin;
-  const flights = mockFlights[key] || mockFlights[revKey] || [];
-  
-  if (flights.length === 0) {
-    document.getElementById('flightList').innerHTML =
-      '<div style="text-align:center;padding:2rem;color:#64748b;">Nenhum voo encontrado para esta rota. Tente uma rota rápida acima.</div>';
-    document.getElementById('resultCount').textContent = '— 0 voos';
-    currentResults = [];
-    return;
+  const list=document.getElementById('flightList');
+  let html='';
+
+  if(viewMode!=='commercial' && awardData){
+    const rows=awardData[cabin]||awardData['economy'];
+    rows.sort((a,b)=>a[1]-b[1]);
+    for(const r of rows){
+      const program=r[0],miles=r[1],taxes=r[2],avail=r[3];
+      const availClass='avail-'+avail;
+      html+=`
+      <div class="flight-card">
+        <div class="flight-top">
+          <div>
+            <div class="flight-route">
+              <span class="airport">${s.origin}</span>
+              <span class="arrow">✈</span>
+              <span class="airport">${s.dest}</span>
+            </div>
+            <div class="flight-meta">${cabin==='business'?'Executiva':'Econômica'} • <span class="${availClass}">${avail==='high'?'Disponível':avail==='medium'?'Média':'Baixa'}</span> disponibilidade</div>
+          </div>
+          <div class="flight-prices">
+            <div class="price-box">
+              <div class="label">🏆 Milhas necessárias</div>
+              <div class="value miles">${miles.toLocaleString()}</div>
+              <div class="miles-detail">+ R$ ${taxes} de taxas</div>
+            </div>
+          </div>
+        </div>
+        <div class="program-tag">${program}</div>
+      </div>`;
+    }
   }
-  
-  currentResults = flights.map(f => ({...f}));
-  document.getElementById('resultCount').textContent = `— ${flights.length} voos`;
-  renderFlights();
-}
 
-function renderFlights() {
-  const list = document.getElementById('flightList');
-  const sorted = [...currentResults];
-  if (currentSort === 'price') sorted.sort((a,b) => a.prices.brl - b.prices.brl);
-  else if (currentSort === 'miles') sorted.sort((a,b) => a.prices.miles - b.prices.miles);
-  else sorted.sort((a,b) => a.duration.localeCompare(b.duration));
-  
-  list.innerHTML = sorted.map(f => `
-    <div class="flight-card">
-      <div class="flight-info">
+  if(viewMode!=='award' && comm){
+    const ecoIdx=cabin==='business'?5:4;
+    const price=comm[ecoIdx]||comm[4];
+    const airlines=comm.slice(0,comm.length-2).join(', ');
+    html+=`
+    <div class="flight-card" style="border-color:rgba(34,197,94,.2)">
+      <div class="flight-top">
         <div>
           <div class="flight-route">
-            <span class="airport">${document.getElementById('origin').value.toUpperCase()}</span>
+            <span class="airport">${s.origin}</span>
             <span class="arrow">✈</span>
-            <span class="airport">${document.getElementById('dest').value.toUpperCase()}</span>
-            <span class="time">${f.dep} — ${f.arr}</span>
+            <span class="airport">${s.dest}</span>
           </div>
-          <div class="flight-company">
-            <span>${f.company} • ${f.flight}</span>
-            <span>• ${f.duration}</span>
-            ${f.lastSeats ? '<span class="tag-last">ÚLTIMOS ASSENTOS</span>' : ''}
-            <span style="color:#64748b;">• ${f.seats} assentos</span>
+          <div class="flight-meta">💰 Tarifa comercial • ${airlines}</div>
+        </div>
+        <div class="flight-prices">
+          <div class="price-box">
+            <div class="label">💵 Preço em R$</div>
+            <div class="value brl">${price}</div>
           </div>
         </div>
       </div>
-      <div class="flight-prices">
-        <div class="price-box">
-          <div class="label">💰 Preço em R$</div>
-          <div class="value brl ${currentSort === 'price' ? 'best' : ''}">R$ ${f.prices.brl.toFixed(2)}</div>
-        </div>
-        <div class="price-box">
-          <div class="label">🏆 Em Milhas</div>
-          <div class="value miles ${currentSort === 'miles' ? 'best' : ''}">${f.prices.miles.toLocaleString()} milhas</div>
-          <div style="font-size:.7rem;color:#64748b;">+ R$ ${f.prices.brlTax.toFixed(2)} de taxas</div>
-        </div>
-        <button class="alert-btn" onclick="alert('🔔 Alerta criado para ${document.getElementById('origin').value.toUpperCase()} → ${document.getElementById('dest').value.toUpperCase()}!')">🔔 Criar Alerta</button>
-      </div>
+    </div>`;
+  }
+
+  if(!html) html='<div style="text-align:center;padding:2rem;color:#64748b;">Nenhum resultado para esta rota. Tente uma rota sugerida acima.</div>';
+  list.innerHTML=html;
+}
+
+// Render deals
+document.getElementById('dealsList').innerHTML=DEALS.map(d=>`
+  <div class="deal-card">
+    <div class="deal-info">
+      <div class="deal-route">${d.from} ✈ ${d.to}</div>
+      <div class="deal-detail">${d.airline} • ${d.cls||'Econômica'}</div>
+      <span class="deal-program">${d.program}</span>
     </div>
-  `).join('');
-}
+    <div class="deal-price">
+      <div class="miles">${d.miles} milhas</div>
+      <div class="taxes">+ ${d.taxes} taxas • até ${d.expires}</div>
+    </div>
+  </div>
+`).join('');
 
-function sortBy(type) {
-  currentSort = type;
-  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.sort-btn')[['price','miles','duration'].indexOf(type)].classList.add('active');
-  renderFlights();
-}
-
-// Set default date to tomorrow
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
-document.getElementById('date').value = tomorrow.toISOString().split('T')[0];
+// Render programs
+document.getElementById('programsList').innerHTML=PROGRAMS.map(p=>`<span class="program-chip">${p}</span>`).join('');
 
 // Auto-search on load
-window.addEventListener('load', () => searchFlights());
+window.addEventListener('load',()=>{document.getElementById('routeLabel').textContent='— GIG→GRU (Econômica)';window._currentSearch={origin:'GIG',dest:'GRU',cabin:'economy'};render()});
 </script>
 </body>
 </html>

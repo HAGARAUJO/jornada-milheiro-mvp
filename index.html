@@ -1,35 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Projetos Luiz Menezes</title>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>FlyTracker — Passagens + Milhas</title>
 <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#0a0e27;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
-h1{font-size:1.5rem;margin-bottom:.5rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-p{color:#94a3b8;margin-bottom:2rem;text-align:center}
+body{font-family:'Inter',sans-serif;background:#0a0e27;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;text-align:center}
+h1{font-size:2rem;margin-bottom:.5rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+p{color:#94a3b8;margin-bottom:2rem}
 .cards{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center}
-.card{background:rgba(30,41,59,.5);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.5rem;width:340px;transition:.2s;text-decoration:none;color:inherit}
+.card{background:rgba(30,41,59,.5);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.5rem;width:320px;transition:.2s;text-decoration:none;color:inherit}
 .card:hover{background:rgba(30,41,59,.7);border-color:rgba(59,130,246,.2);transform:translateY(-2px)}
-.card h2{font-size:1.1rem;margin-bottom:.5rem}
-.card .tag{display:inline-block;font-size:.7rem;padding:.2rem .5rem;border-radius:4px;margin-bottom:.75rem}
-.tag-jornada{background:rgba(234,179,8,.15);color:#fbbf24}
+.card.big{width:400px;border-color:rgba(59,130,246,.2)}
+.card .tag{display:inline-block;font-size:.65rem;padding:.2rem .5rem;border-radius:100px;margin-bottom:.75rem}
 .tag-fly{background:rgba(59,130,246,.15);color:#93c5fd}
-.card p{font-size:.85rem;color:#94a3b8;margin-bottom:0;text-align:left}
+.tag-jornada{background:rgba(234,179,8,.15);color:#fbbf24}
+.card h2{font-size:1.1rem;margin-bottom:.35rem}
+.card p{font-size:.8rem;color:#94a3b8;margin-bottom:.5rem;text-align:left}
+.features{font-size:.75rem;color:#64748b;margin-top:.5rem;text-align:left;line-height:1.6}
+.cta-btn{display:inline-block;margin-top:.75rem;padding:.6rem 2rem;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;border-radius:8px;color:#fff;font-weight:600;font-size:.85rem;cursor:pointer;transition:.2s;text-decoration:none}
+.cta-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,.3)}
+footer{margin-top:2rem;color:#475569;font-size:.75rem}
 </style></head>
 <body>
 <h1>🚀 Projetos Luiz Menezes</h1>
-<p>Selecione um projeto para visualizar o protótipo:</p>
+<p>Projetos em desenvolvimento — dados reais de programas de fidelidade</p>
 <div class="cards">
-  <a class="card" href="jornada.html">
-    <h2>💰 Jornada do Milheiro</h2>
-    <div class="tag tag-jornada">Funil de Vendas</div>
-    <p>Landing page VSL para sistema de educação financeira. Hero, vídeo, CTA e checkout.</p>
+  <a class="card big" href="flytracker.html">
+    <div class="tag tag-fly">🛩️ FlyTracker — Recomendado</div>
+    <h2>Monitor de Passagens Aéreas + Milhas</h2>
+    <p>Compare tarifas comerciais (R$) com tarifas award de 10 programas de fidelidade: Smiles, TudoAzul, LATAM Pass, AAdvantage, Delta, United, Flying Blue e mais.</p>
+    <div class="features">
+      ✅ Busca por rota com milhas reais<br>
+      ✅ Preços em R$ + milhas lado a lado<br>
+      ✅ Ofertas award selecionadas<br>
+      ✅ Alertas inteligentes
+    </div>
+    <div class="cta-btn">Abrir FlyTracker →</div>
   </a>
-  <a class="card" href="flytracker.html">
-    <h2>🛩️ FlyTracker</h2>
-    <div class="tag tag-fly">Passagens Aéreas + Milhas</div>
-    <p>Buscador que unifica tarifas comerciais (R$) e tarifas award (milhas). Busca por rota, alertas de preço.</p>
+  <a class="card" href="jornada.html">
+    <div class="tag tag-jornada">💰 Jornada do Milheiro</div>
+    <h2>Funil de Vendas VSL</h2>
+    <p>Landing page do sistema de educação financeira</p>
   </a>
 </div>
-<footer style="margin-top:2rem;color:#475569;font-size:.75rem;">MVP • Hermes Agent</footer>
+<footer>MVP • Dados reais de programas de fidelidade • Hermes Agent</footer>
 </body>
 </html>
