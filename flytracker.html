@@ -354,6 +354,7 @@ const DEALS=[
 const PROGS=["Smiles (Gol)","TudoAzul (Azul)","LATAM Pass","AAdvantage","Delta SkyMiles","United MileagePlus","Flying Blue","BA Avios","Iberia Plus","TAP Miles&Go"];
 
 let view='combined',isLogin=true,currentUser=null;
+const API='https://fastapi.pelagus.com.br';
 
 // ─── AUTH ───
 function toggleAuthMode(){
@@ -365,7 +366,7 @@ function toggleAuthMode(){
   document.getElementById('authError').style.display='none';
 }
 
-function handleAuth(e){
+async function handleAuth(e){
   e.preventDefault();
   const email=document.getElementById('authEmail').value.trim();
   const pass=document.getElementById('authPass').value;
@@ -375,24 +376,33 @@ function handleAuth(e){
   err.style.display='none';ok.style.display='none';
 
   if(isLogin){
-    const stored=localStorage.getItem('flytracker_user_'+email);
-    if(!stored){err.textContent='Email não encontrado. Crie uma conta primeiro.';err.style.display='block';return}
-    const user=JSON.parse(stored);
-    if(user.pass!==pass){err.textContent='Senha incorreta.';err.style.display='block';return}
-    currentUser=user;
-    document.getElementById('userName').textContent=user.name;
-    enterApp();
+    try{
+      const r=await fetch(API+'/api/login',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,password:pass})
+      });
+      const d=await r.json();
+      if(!r.ok){err.textContent=d.detail||'Erro ao fazer login';err.style.display='block';return}
+      currentUser=d.user;
+      localStorage.setItem('flytracker_token',d.token);
+      document.getElementById('userName').textContent=d.user.name;
+      enterApp();
+    }catch(e){err.textContent='Erro de conexão com o servidor';err.style.display='block'}
   }else{
     if(pass.length<6){err.textContent='A senha precisa ter no mínimo 6 caracteres.';err.style.display='block';return}
     if(!name){err.textContent='Informe seu nome.';err.style.display='block';return}
-    const user={name,email,pass,createdAt:new Date().toISOString()};
-    localStorage.setItem('flytracker_user_'+email,JSON.stringify(user));
-    currentUser=user;
-    ok.textContent='Conta criada com sucesso!';ok.style.display='block';
-    setTimeout(()=>{
-      document.getElementById('userName').textContent=user.name;
-      enterApp();
-    },600);
+    try{
+      const r=await fetch(API+'/api/register',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name,email,password:pass})
+      });
+      const d=await r.json();
+      if(!r.ok){err.textContent=d.detail||'Erro ao criar conta';err.style.display='block';return}
+      currentUser=d.user;
+      localStorage.setItem('flytracker_token',d.token);
+      ok.textContent='Conta criada com sucesso!';ok.style.display='block';
+      setTimeout(()=>{document.getElementById('userName').textContent=d.user.name;enterApp()},600);
+    }catch(e){err.textContent='Erro de conexão com o servidor';err.style.display='block'}
   }
 }
 
@@ -403,7 +413,10 @@ function enterApp(){
   document.getElementById('userName').classList.add('show');
 }
 
-function logout(){
+async function logout(){
+  const token=localStorage.getItem('flytracker_token');
+  if(token){try{await fetch(API+'/api/logout?token='+encodeURIComponent(token),{method:'POST'})}catch(e){}}
+  localStorage.removeItem('flytracker_token');
   currentUser=null;
   document.getElementById('app').classList.remove('active');
   document.getElementById('authOverlay').style.display='flex';
@@ -505,8 +518,27 @@ document.getElementById('dealsList').innerHTML=DEALS.map(d=>
 
 document.getElementById('programsList').innerHTML=PROGS.map(p=>`<span class="program-chip">${p}</span>`).join('');
 
-// Init
-document.body.classList.add('auth-open');
+// Init — check saved session first
+(async function(){
+  const token=localStorage.getItem('flytracker_token');
+  if(token){
+    try{
+      const r=await fetch(API+'/api/me?token='+encodeURIComponent(token));
+      if(r.ok){
+        const user=await r.json();
+        currentUser=user;
+        document.getElementById('userName').textContent=user.name;
+        document.body.classList.remove('auth-open');
+        document.getElementById('app').classList.add('active');
+        document.getElementById('userName').classList.add('show');
+        return;
+      }
+    }catch(e){}
+    localStorage.removeItem('flytracker_token');
+  }
+  document.body.classList.add('auth-open');
+})();
+
 window.addEventListener('load',()=>{
   window._s={origin:'GIG',dest:'GRU',cabin:'economy'};
   document.getElementById('routeInfo').textContent='— GIG→GRU (Econ)';
