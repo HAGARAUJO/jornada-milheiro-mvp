@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlyTracker — Passagens Aéreas + Milhas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#0a0e27; color:#e2e8f0; min-height:100vh; }
+  .bg-glow { position:fixed; top:-30%; left:-10%; width:120%; height:120%; background:radial-gradient(ellipse at 30% 20%, rgba(59,130,246,.08) 0%,transparent 60%); pointer-events:none; z-index:0; }
+
+  /* Nav */
+  nav { position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:1rem 2rem; border-bottom:1px solid rgba(255,255,255,.06); }
+  .logo { display:flex; align-items:center; gap:.5rem; font-weight:700; font-size:1.25rem; }
+  .logo span { color:#3b82f6; }
+  .logo small { font-weight:400; font-size:.75rem; color:#64748b; }
+  nav a { color:#94a3b8; text-decoration:none; font-size:.875rem; padding:.5rem 1rem; border-radius:8px; transition:.2s; }
+  nav a:hover { color:#fff; background:rgba(255,255,255,.05); }
+
+  /* Hero */
+  .hero { position:relative; z-index:10; text-align:center; padding:3rem 1.5rem 2rem; }
+  .hero h1 { font-size:2.5rem; font-weight:700; margin-bottom:.75rem; }
+  .hero h1 span { background:linear-gradient(135deg,#3b82f6,#8b5cf6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p { color:#94a3b8; max-width:600px; margin:0 auto 1.5rem; font-size:1.05rem; line-height:1.6; }
+  .hero .badge { display:inline-flex; gap:.5rem; align-items:center; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.2); border-radius:100px; padding:.35rem .9rem; font-size:.8rem; color:#93c5fd; margin-bottom:1rem; }
+
+  /* Search Panel */
+  .search-panel { position:relative; z-index:10; max-width:900px; margin:0 auto 2rem; padding:0 1.5rem; }
+  .search-card { background:rgba(30,41,59,.6); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:1.5rem; backdrop-filter:blur(20px); }
+  .search-row { display:flex; gap:1rem; flex-wrap:wrap; align-items:end; }
+  .field { flex:1; min-width:140px; }
+  .field label { display:block; font-size:.75rem; color:#64748b; margin-bottom:.35rem; font-weight:500; text-transform:uppercase; letter-spacing:.05em; }
+  .field input, .field select { width:100%; padding:.7rem .9rem; background:rgba(15,23,42,.6); border:1px solid rgba(255,255,255,.08); border-radius:8px; color:#e2e8f0; font-size:.9rem; outline:none; transition:.2s; }
+  .field input:focus, .field select:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+  .switch-btn { display:flex; align-items:center; padding:.7rem; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.2); border-radius:8px; color:#3b82f6; cursor:pointer; font-size:1.2rem; transition:.2s; align-self:end; }
+  .switch-btn:hover { background:rgba(59,130,246,.2); }
+  .btn-primary { padding:.7rem 2rem; background:linear-gradient(135deg,#3b82f6,#6366f1); border:none; border-radius:8px; color:#fff; font-weight:600; font-size:.9rem; cursor:pointer; transition:.2s; white-space:nowrap; align-self:end; }
+  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(59,130,246,.3); }
+
+  /* Results */
+  .results { position:relative; z-index:10; max-width:900px; margin:0 auto 3rem; padding:0 1.5rem; }
+  .result-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+  .result-header h2 { font-size:1.15rem; font-weight:600; }
+  .result-header h2 small { font-weight:400; color:#64748b; font-size:.85rem; }
+  .sort-btns { display:flex; gap:.35rem; }
+  .sort-btn { padding:.35rem .75rem; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:6px; color:#94a3b8; font-size:.75rem; cursor:pointer; transition:.2s; }
+  .sort-btn.active { background:rgba(59,130,246,.15); border-color:rgba(59,130,246,.3); color:#3b82f6; }
+  .sort-btn:hover { background:rgba(255,255,255,.08); }
+
+  .flight-card { background:rgba(30,41,59,.4); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:1.25rem; margin-bottom:.75rem; transition:.2s; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem; }
+  .flight-card:hover { background:rgba(30,41,59,.6); border-color:rgba(255,255,255,.1); }
+  .flight-info { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+  .flight-route { display:flex; align-items:center; gap:.5rem; }
+  .flight-route .airport { font-weight:600; font-size:1rem; }
+  .flight-route .arrow { color:#64748b; font-size:.8rem; }
+  .flight-route .time { font-size:.8rem; color:#94a3b8; }
+  .flight-company { font-size:.75rem; color:#64748b; display:flex; align-items:center; gap:.35rem; }
+  .flight-prices { display:flex; gap:1.5rem; align-items:center; }
+  .price-box { text-align:right; }
+  .price-box .label { font-size:.65rem; color:#64748b; text-transform:uppercase; letter-spacing:.05em; }
+  .price-box .value { font-size:1.1rem; font-weight:700; }
+  .price-box .value.brl { color:#22c55e; }
+  .price-box .value.miles { color:#f59e0b; }
+  .price-box .value.best { font-size:1.25rem; }
+  .tag-last { font-size:.65rem; background:#ef4444; color:#fff; padding:.15rem .45rem; border-radius:4px; font-weight:600; }
+  .alert-btn { padding:.5rem 1rem; background:transparent; border:1px solid rgba(59,130,246,.3); border-radius:8px; color:#3b82f6; font-size:.8rem; cursor:pointer; transition:.2s; }
+  .alert-btn:hover { background:rgba(59,130,246,.1); }
+
+  /* Alert demo */
+  .alert-demo { position:relative; z-index:10; max-width:900px; margin:0 auto 3rem; padding:0 1.5rem; }
+  .alert-card { background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.08)); border:1px solid rgba(59,130,246,.15); border-radius:12px; padding:1.25rem; }
+  .alert-card h3 { font-size:.95rem; font-weight:600; margin-bottom:.5rem; }
+  .alert-card p { color:#94a3b8; font-size:.85rem; margin-bottom:.75rem; }
+  .alert-tags { display:flex; gap:.5rem; flex-wrap:wrap; }
+  .alert-tag { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:100px; padding:.3rem .75rem; font-size:.75rem; color:#94a3b8; }
+
+  footer { position:relative; z-index:10; text-align:center; padding:2rem; color:#475569; font-size:.8rem; border-top:1px solid rgba(255,255,255,.04); }
+
+  @media(max-width:640px){ .search-row { flex-direction:column; } .field { min-width:100%; } .flight-card { flex-direction:column; align-items:stretch; } .flight-prices { justify-content:space-around; } }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<nav>
+  <div class="logo">🛩️ <span>Fly</span>Tracker <small>beta</small></div>
+  <div><a href="#busca">Busca</a><a href="#alertas">Alertas</a></div>
+</nav>
+
+<section class="hero">
+  <div class="badge">✨ Passagens comerciais + Tarifas Award (milhas)</div>
+  <h1>Encontre o melhor preço<br>em <span>dinheiro ou milhas</span></h1>
+  <p>Busque passagens aéreas no Brasil e no mundo. Compare preços em R$ com tarifas award em milhas de todos os programas de fidelidade.</p>
+</section>
+
+<section class="search-panel" id="busca">
+  <div class="search-card">
+    <div class="search-row">
+      <div class="field">
+        <label>Origem</label>
+        <input type="text" id="origin" value="GIG" placeholder="Cidade ou aeroporto">
+      </div>
+      <button class="switch-btn" onclick="swapOrigins()" title="Inverter">⇄</button>
+      <div class="field">
+        <label>Destino</label>
+        <input type="text" id="dest" value="GRU" placeholder="Cidade ou aeroporto">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="date">
+      </div>
+      <div class="field">
+        <label>Classe</label>
+        <select id="class">
+          <option value="economy">Econômica</option>
+          <option value="executive">Executiva</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="searchFlights()">Buscar voos →</button>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
+      <span style="font-size:.75rem;color:#64748b;">Rotas rápidas:</span>
+      <span class="sort-btn" onclick="quickRoute('GIG','GRU')">GIG → GRU</span>
+      <span class="sort-btn" onclick="quickRoute('GRU','BSB')">GRU → BSB</span>
+      <span class="sort-btn" onclick="quickRoute('GIG','REC')">GIG → REC</span>
+      <span class="sort-btn" onclick="quickRoute('GRU','FOR')">GRU → FOR</span>
+      <span class="sort-btn" onclick="quickRoute('GIG','POA')">GIG → POA</span>
+      <span class="sort-btn" onclick="quickRoute('GRU','JFK')">GRU → JFK</span>
+    </div>
+  </div>
+</section>
+
+<section class="results" id="results">
+  <div class="result-header">
+    <h2>Voos encontrados <small id="resultCount">— clique em Buscar</small></h2>
+    <div class="sort-btns" id="sortBtns">
+      <button class="sort-btn active" onclick="sortBy('price')">💰 Menor preço</button>
+      <button class="sort-btn" onclick="sortBy('miles')">🏆 Menos milhas</button>
+      <button class="sort-btn" onclick="sortBy('duration')">⏱ Duração</button>
+    </div>
+  </div>
+  <div id="flightList"></div>
+</section>
+
+<section class="alert-demo" id="alertas">
+  <div class="alert-card">
+    <h3>🔔 Alertas Inteligentes</h3>
+    <p>Receba notificações quando o preço de uma rota cair ou quando abrir disponibilidade de tarifa award. Configure origem, destino, período e valor alvo.</p>
+    <div class="alert-tags">
+      <span class="alert-tag">🔵 GIG → GRU • R$ 350</span>
+      <span class="alert-tag">🟡 GRU → JFK • 40.000 milhas</span>
+      <span class="alert-tag">🟢 BSB → REC • Executiva</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  FlyTracker MVP • Desenvolvido por Hermes Agent • Dados mockados para demonstração
+</footer>
+
+<script>
+const mockFlights = {
+  'GIG-GRU': [
+    { company:'LATAM', flight:'LA3901', dep:'06:25', arr:'07:30', duration:'1h05', seats:12, prices:{brl:289,miles:12000,brlTax:87} },
+    { company:'GOL', flight:'G31007', dep:'08:00', arr:'09:10', duration:'1h10', seats:8, prices:{brl:349,miles:14000,brlTax:92} },
+    { company:'Azul', flight:'AD4021', dep:'10:30', arr:'11:40', duration:'1h10', seats:3, prices:{brl:179,miles:8000,brlTax:65}, lastSeats:true },
+    { company:'LATAM', flight:'LA3905', dep:'14:15', arr:'15:20', duration:'1h05', seats:22, prices:{brl:229,miles:10000,brlTax:78} },
+    { company:'GOL', flight:'G31015', dep:'18:30', arr:'19:40', duration:'1h10', seats:15, prices:{brl:259,miles:11000,brlTax:82} },
+  ],
+  'GRU-BSB': [
+    { company:'LATAM', flight:'LA3260', dep:'06:00', arr:'07:55', duration:'1h55', seats:18, prices:{brl:319,miles:14000,brlTax:95} },
+    { company:'GOL', flight:'G31740', dep:'09:30', arr:'11:25', duration:'1h55', seats:6, prices:{brl:289,miles:13000,brlTax:88}, lastSeats:true },
+    { company:'Azul', flight:'AD2801', dep:'13:00', arr:'14:55', duration:'1h55', seats:10, prices:{brl:259,miles:11000,brlTax:72} },
+  ],
+  'GIG-REC': [
+    { company:'Azul', flight:'AD4005', dep:'05:45', arr:'08:55', duration:'3h10', seats:20, prices:{brl:459,miles:22000,brlTax:145} },
+    { company:'LATAM', flight:'LA4520', dep:'08:30', arr:'11:35', duration:'3h05', seats:14, prices:{brl:399,miles:18000,brlTax:132} },
+    { company:'GOL', flight:'G31550', dep:'14:00', arr:'17:10', duration:'3h10', seats:4, prices:{brl:329,miles:16000,brlTax:118}, lastSeats:true },
+  ],
+  'GRU-FOR': [
+    { company:'LATAM', flight:'LA3450', dep:'06:15', arr:'09:20', duration:'3h05', seats:16, prices:{brl:529,miles:24000,brlTax:158} },
+    { company:'GOL', flight:'G31820', dep:'10:30', arr:'13:35', duration:'3h05', seats:9, prices:{brl:479,miles:21000,brlTax:142} },
+    { company:'Azul', flight:'AD4250', dep:'16:00', arr:'19:10', duration:'3h10', seats:2, prices:{brl:389,miles:18000,brlTax:125}, lastSeats:true },
+  ],
+  'GIG-POA': [
+    { company:'GOL', flight:'G31190', dep:'07:00', arr:'09:10', duration:'2h10', seats:11, prices:{brl:249,miles:11000,brlTax:76} },
+    { company:'LATAM', flight:'LA3170', dep:'11:30', arr:'13:40', duration:'2h10', seats:19, prices:{brl:219,miles:9500,brlTax:68} },
+    { company:'Azul', flight:'AD4130', dep:'16:45', arr:'19:00', duration:'2h15', seats:7, prices:{brl:179,miles:8000,brlTax:55} },
+  ],
+  'GRU-JFK': [
+    { company:'LATAM', flight:'LA8080', dep:'21:00', arr:'05:30+1', duration:'9h30', seats:25, prices:{brl:2899,miles:65000,brlTax:480} },
+    { company:'American', flight:'AA950', dep:'22:30', arr:'07:00+1', duration:'9h30', seats:12, prices:{brl:2599,miles:55000,brlTax:420} },
+    { company:'Delta', flight:'DL226', dep:'20:15', arr:'04:45+1', duration:'9h30', seats:3, prices:{brl:2199,miles:45000,brlTax:390}, lastSeats:true },
+  ],
+};
+
+let currentResults = [];
+let currentSort = 'price';
+
+function swapOrigins() {
+  const o = document.getElementById('origin');
+  const d = document.getElementById('dest');
+  [o.value, d.value] = [d.value, o.value];
+}
+
+function quickRoute(origin, dest) {
+  document.getElementById('origin').value = origin;
+  document.getElementById('dest').value = dest;
+  searchFlights();
+}
+
+function searchFlights() {
+  const origin = document.getElementById('origin').value.toUpperCase().trim();
+  const dest = document.getElementById('dest').value.toUpperCase().trim();
+  const key = origin + '-' + dest;
+  const revKey = dest + '-' + origin;
+  const flights = mockFlights[key] || mockFlights[revKey] || [];
+  
+  if (flights.length === 0) {
+    document.getElementById('flightList').innerHTML =
+      '<div style="text-align:center;padding:2rem;color:#64748b;">Nenhum voo encontrado para esta rota. Tente uma rota rápida acima.</div>';
+    document.getElementById('resultCount').textContent = '— 0 voos';
+    currentResults = [];
+    return;
+  }
+  
+  currentResults = flights.map(f => ({...f}));
+  document.getElementById('resultCount').textContent = `— ${flights.length} voos`;
+  renderFlights();
+}
+
+function renderFlights() {
+  const list = document.getElementById('flightList');
+  const sorted = [...currentResults];
+  if (currentSort === 'price') sorted.sort((a,b) => a.prices.brl - b.prices.brl);
+  else if (currentSort === 'miles') sorted.sort((a,b) => a.prices.miles - b.prices.miles);
+  else sorted.sort((a,b) => a.duration.localeCompare(b.duration));
+  
+  list.innerHTML = sorted.map(f => `
+    <div class="flight-card">
+      <div class="flight-info">
+        <div>
+          <div class="flight-route">
+            <span class="airport">${document.getElementById('origin').value.toUpperCase()}</span>
+            <span class="arrow">✈</span>
+            <span class="airport">${document.getElementById('dest').value.toUpperCase()}</span>
+            <span class="time">${f.dep} — ${f.arr}</span>
+          </div>
+          <div class="flight-company">
+            <span>${f.company} • ${f.flight}</span>
+            <span>• ${f.duration}</span>
+            ${f.lastSeats ? '<span class="tag-last">ÚLTIMOS ASSENTOS</span>' : ''}
+            <span style="color:#64748b;">• ${f.seats} assentos</span>
+          </div>
+        </div>
+      </div>
+      <div class="flight-prices">
+        <div class="price-box">
+          <div class="label">💰 Preço em R$</div>
+          <div class="value brl ${currentSort === 'price' ? 'best' : ''}">R$ ${f.prices.brl.toFixed(2)}</div>
+        </div>
+        <div class="price-box">
+          <div class="label">🏆 Em Milhas</div>
+          <div class="value miles ${currentSort === 'miles' ? 'best' : ''}">${f.prices.miles.toLocaleString()} milhas</div>
+          <div style="font-size:.7rem;color:#64748b;">+ R$ ${f.prices.brlTax.toFixed(2)} de taxas</div>
+        </div>
+        <button class="alert-btn" onclick="alert('🔔 Alerta criado para ${document.getElementById('origin').value.toUpperCase()} → ${document.getElementById('dest').value.toUpperCase()}!')">🔔 Criar Alerta</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function sortBy(type) {
+  currentSort = type;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sort-btn')[['price','miles','duration'].indexOf(type)].classList.add('active');
+  renderFlights();
+}
+
+// Set default date to tomorrow
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+document.getElementById('date').value = tomorrow.toISOString().split('T')[0];
+
+// Auto-search on load
+window.addEventListener('load', () => searchFlights());
+</script>
+</body>
+</html>
